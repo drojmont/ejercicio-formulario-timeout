@@ -35,6 +35,19 @@ const baseDeDatos = {
 // 1) Escuchar el evento necesario para reaccionar cuando la persona
 // haga click en el botón iniciar sesión.
 
+function validarDatos(avisoCargando) {
+  avisoCargando.classList.add("hidden");
+  console.log("bla bla bla");
+}
+
+let logInPress = document.querySelector("button.login-btn");
+
+logInPress.addEventListener("click", function (e) {
+  let avisoCargando = document.getElementById("loader");
+  avisoCargando.classList.remove("hidden");
+  setTimeout(validarDatos, 3000, avisoCargando);
+});
+
 // 2) El proceso de inicio de sesión deberá tener una demora de 3 segundos.
 // Deberás agregar la función correspondiente para simular dicha demora.
 
