@@ -48,6 +48,9 @@ const baseDeDatos = {
 // En caso de que alguna de las validaciones no sea exitosa,
 // se deberá mostrar un mensaje de error que diga "Alguno de los datos ingresados son incorrectos"
 
+// 5) En caso de que los datos ingresados sean correctos, se deberá ocultar el formulario y mostrar
+// un mensaje de bienvenida al sitio.
+
 function validarEmail() {
   let emailParaValidar = document.getElementById("email-input").value;
   const regExEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -66,101 +69,64 @@ function validarPassword() {
     return false;
   }
 }
-
 function validarUsuario(usuarios, email, password) {
   for (let i = 0; i < usuarios.length; i++) {
     if (usuarios[i].email === email && usuarios[i].password === password) {
       return true;
     }
   }
-  alert("Alguno de los datos ingresados son incorrectos");
   return false;
+}
+
+function validarDatos() {
+  const email = validarEmail();
+  const password = validarPassword();
+  if (
+    email &&
+    password &&
+    validarUsuario(baseDeDatos.usuarios, email, password)
+  ) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
+function ocultarElementosHtml(elemento) {
+  elemento.classList.add("hidden");
+}
+
+function mostrarError(mensajeError) {
+  let errorBoxMsj = document.getElementById("error-container");
+  errorBoxMsj.innerHTML = `<small>${mensajeError}</small>`;
+  errorBoxMsj.classList.toggle("hidden");
 }
 
 function accesoAprobado() {
   let formulario = document.querySelector("form");
-}
-
-function validarDatos(avisoCargando) {
-  avisoCargando.classList.add("hidden");
-  const email = validarEmail();
-  const password = validarPassword();
-  const variableTrue = validarUsuario(baseDeDatos.usuarios, email, password);
-  if (variableTrue) {
-    console.log("acceso aprobado");
-  } else {
-    function validarEmail() {
-      let emailParaValidar = document.getElementById("email-input").value;
-      const regExEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      if (regExEmail.test(emailParaValidar)) {
-        return emailParaValidar;
-      } else {
-        return false;
-      }
-    }
-
-    function validarPassword() {
-      let passwordParaValidar = document.getElementById("password-input").value;
-      if (passwordParaValidar.length >= 5) {
-        return passwordParaValidar;
-      } else {
-        return false;
-      }
-    }
-
-    function validarUsuario(usuarios, email, password) {
-      for (let i = 0; usuarios.length; i++) {
-        if (usuarios[i].email === email && usuarios[i].password === password) {
-          return true;
-        }
-      }
-      return false;
-    }
-
-    function accesoAprobado() {
-      let formulario = document.querySelector("form");
-    }
-
-    function validarDatos(avisoCargando) {
-      avisoCargando.classList.add("hidden");
-      const email = validarEmail();
-      const password = validarPassword();
-      const variableTrue = validarUsuario(
-        baseDeDatos.usuarios,
-        email,
-        password
-      );
-      if (variableTrue) {
-        console.log("acceso aprobado");
-      } else {
-        alert("Alguno de los datos ingresados son incorrectos");
-      }
-    }
-
-    let logInPress = document.querySelector("button.login-btn");
-
-    logInPress.addEventListener("click", function (e) {
-      let avisoCargando = document.getElementById("loader");
-      avisoCargando.classList.remove("hidden");
-      setTimeout(validarDatos, 3000, avisoCargando);
-
-      //----el alert no sirve por estar dentro de funciones, por lo que se debe sacar
-    });
-  }
+  formulario.classList.add("hidden");
+  let titulo = document.querySelector("h1");
+  titulo.innerText = "Bienvenido al sitio 😀";
 }
 
 let logInPress = document.querySelector("button.login-btn");
 
-logInPress.addEventListener("click", function (e) {
-  let avisoCargando = document.getElementById("loader");
-  avisoCargando.classList.remove("hidden");
-  setTimeout(validarDatos, 3000, avisoCargando);
-
-  //----el alert no sirve por estar dentro de funciones, por lo que se debe sacar
+logInPress.addEventListener("click", async function (e) {
+  if (validarDatos()) {
+    mostrarError("");
+    let avisoCargando = document.getElementById("loader");
+    avisoCargando.classList.remove("hidden");
+    await new Promise((resolve) => {
+      setTimeout(() => {
+        ocultarElementosHtml(avisoCargando);
+        resolve();
+      }, 3000);
+    });
+    accesoAprobado();
+  } else {
+    mostrarError("Alguno de los datos ingresados son incorrectos");
+  }
 });
-
-// 5) En caso de que los datos ingresados sean correctos, se deberá ocultar el formulario y mostrar
-// un mensaje de bienvenida al sitio.
 
 /* 
 TIPS:
